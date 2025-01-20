@@ -1,101 +1,113 @@
-/* Сбрасываем отступы и паддинги для всех элементов */
+/* Reset styles */
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box; /* Устанавливаем box-sizing, чтобы padding и border не увеличивали размеры элемента */
+  box-sizing: border-box;
 }
 
-/* Определение переменных для удобства */
 :root {
-  --text-color: white; /* Цвет текста */
-  --bg-color: rgb(22, 22, 24); /* Цвет фона */
-  --stroke-color: rgba(255, 255, 255, 0.5); /* Цвет границы (с полупрозрачностью) */
-  --surface-color: rgba(255, 255, 255, 0.05); /* Цвет фона плитки (с полупрозрачностью) */
-  --surface-color-hover: rgba(0, 0, 0, 0.02); /* Цвет фона плитки при наведении */
+  --text-color: white;
+  --bg-color: rgb(22, 22, 24);
+  --stroke-color: rgba(255, 255, 255, 0.5);
+  --surface-color: rgba(255, 255, 255, 0.05);
+  --surface-color-hover: rgba(0, 0, 0, 0.02);
 }
 
-/* Общие стили для тела страницы */
 body {
-  background-color: var(--bg-color); /* Цвет фона, если изображение не загрузится */
-  min-height: 100vh; /* Минимальная высота страницы 100% от высоты экрана */
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  overflow-y: auto; /* Prevent scrolling */
 }
 
-/* Стили для всех элементов внутри body */
 body * {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif; /* Шрифт */
-  color: var(--text-color); /* Цвет текста */
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  color: var(--text-color);
 }
 
-/* Контейнер для основной части страницы */
 #container {
-  width: 100%; /* Ширина 100% от родительского контейнера */
-  max-width: 588px; /* Ограничиваем максимальную ширину */
-  margin: 0 auto; /* Центрируем контейнер */
-  padding: 0 24px; /* Отступы по бокам */
+  width: 100%;
+  max-width: 588px;
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-/* Стили для блока пользователя */
 #user {
-  text-align: center; /* Центрирование текста */
-  padding: 24px; /* Отступы внутри блока */
+  text-align: center;
+  padding: 16px; /* Reduced padding */
 }
 
-/* Стили для изображения пользователя */
 #user img {
-  width: 200px; /* Увеличиваем размер изображения */
-  height: 200px; /* Увеличиваем высоту */
-  border-radius: 20%; /* Округление до круга */
-  border: 4px solid #fff; /* Белая обводка вокруг аватара */
-  margin-top: 50px;
-  position: relative; /* You need to position the element for z-index to work */
-  z-index: 1;     /* Set a positive z-index to bring it forward */
+  width: 150px; /* Reduced from 200px */
+  height: 150px; /* Reduced from 200px */
+  border-radius: 20%;
+  border: 4px solid #fff;
+  margin-top: 20px; /* Reduced from 50px */
+  position: relative;
+  z-index: 1;
 }
 
-/* Стили для текста пользователя */
 #user p {
   font-weight: 500;
-  line-height: 90px;
-  font-size: 60px; /* Adjust this value to your desired size */
-  margin-top: 20px;
-  /* Other styles remain here */
+  line-height: 1.2; /* Changed from fixed 90px */
+  font-size: clamp(32px, 5vw, 60px); /* Responsive font size */
+  margin-top: 16px;
 }
 
-/* Стили для списка плиток */
 ul {
-  list-style: none; /* Убираем маркеры у списка */
-  display: grid; /* Используем сетку */
-  grid-template-columns: repeat(3, 1fr); /* 3 столбца в сетке */
-  gap: 16px; /* Расстояние между плитками */
-  padding: 24px 0; /* Отступы сверху и снизу */
-  margin: 0; /* Убираем внешние отступы */
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 16px 0; /* Reduced padding */
+  margin: 0;
 }
 
-/* Стили для элементов списка плиток */
 ul li {
-  aspect-ratio: 1; /* Соотношение сторон 1:1, т.е. квадрат */
+  aspect-ratio: 1;
 }
 
-/* Стили для ссылок внутри плиток */
 ul li a {
-  display: flex; /* Используем flexbox для выравнивания содержимого */
-  align-items: center; /* Выравнивание по вертикали */
-  justify-content: center; /* Выравнивание по горизонтали */
-  padding: 16px; /* Внутренние отступы */
-  background: var(--surface-color); /* Цвет фона плитки */
-  border: 1px solid var(--stroke-color); /* Граница плитки */
-  border-radius: 8px; /* Округление углов плитки */
-  backdrop-filter: blur(4px); /* Эффект размытия фона за плиткой */
-  -webkit-backdrop-filter: blur(4px); /* Для поддержки старых браузеров */
-  text-decoration: none; /* Убираем подчеркивание у ссылок */
-  font-weight: 500; /* Полужирный шрифт */
-  transition: background 0.2s; /* Плавный переход для фона */
-  width: 100%; /* Ширина на 100% от родительского элемента */
-  height: 100%; /* Высота на 100% от родительского элемента */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px; /* Reduced padding */
+  background: var(--surface-color);
+  border: 1px solid var(--stroke-color);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+  width: 100%;
+  height: 100%;
 }
 
-/* Стили для плитки при наведении */
 ul li a:hover {
-  background: var(--surface-color-hover); /* Цвет фона при наведении */
-  border: 1.5px solid var(--text-color); /* Увеличиваем толщину границы и меняем цвет */
+  background: var(--surface-color-hover);
+  border: 1.5px solid var(--text-color);
+}
+
+/* Add media queries for better responsiveness */
+@media screen and (max-height: 800px) {
+  #user img {
+    width: 120px;
+    height: 120px;
+    margin-top: 12px;
+  }
+  
+  #user {
+    padding: 12px;
+  }
+  
+  ul {
+    padding: 12px 0;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  ul {
+    grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns on mobile */
+  }
 }
