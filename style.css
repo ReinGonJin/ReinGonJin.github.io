@@ -106,8 +106,8 @@ ul li a:hover {
   }
 }
 
-@media screen and (max-width: 480px) {
+/*@media screen and (max-width: 480px) {
   ul {
-    grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns on mobile */
+    grid-template-columns: repeat(2, 1fr); /* Switch to 2 columns on mobile 
   }
-}
+}*/
