@@ -45,7 +45,6 @@ body * {
   height: 200px;
   border-radius: 20%;
   border: 4px solid #fff;
-  margin-top: 20px; /* Reduced from 50px */
   position: relative;
   z-index: 1;
 }
