@@ -16,7 +16,10 @@
 body {
   background-color: var(--bg-color);
   min-height: 100vh;
-  overflow-y: auto; /* Prevent scrolling */
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 body * {
