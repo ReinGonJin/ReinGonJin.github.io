@@ -61,7 +61,7 @@ ul {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
-  padding: 16px 0; /* Reduced padding */
+  padding: 16px 0;
   margin: 0;
 }
 
@@ -71,9 +71,10 @@ ul li {
 
 ul li a {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px; /* Reduced padding */
+  padding: 12px;
   background: var(--surface-color);
   border: 1px solid var(--stroke-color);
   border-radius: 8px;
@@ -86,10 +87,14 @@ ul li a {
   height: 100%;
 }
 
-ul li a:hover {
-  background: var(--surface-color-hover);
-  border: 1.5px solid var(--text-color);
+ul li a .icon {
+  font-size: 4em;
+  position: absolute;
 }
+
+ul li a .text {
+  margin-top: auto; /* PUSHES TEXT TO THE BOTTOM */
+  }
 
 /* Add media queries for better responsiveness */
 @media screen and (max-height: 800px) {
