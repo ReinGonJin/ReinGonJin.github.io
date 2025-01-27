@@ -11,6 +11,14 @@
   --stroke-color: rgba(255, 255, 255, 0.5);
   --surface-color: rgba(255, 255, 255, 0.05);
   --surface-color-hover: rgba(0, 0, 0, 0.02);
+  --space: 1rem;
+  --bg: #09090b;
+  --fg: #e3e3e3;
+  --surface-1: #101012;
+  --surface-2: #27272a;
+  --surface-3: #52525b;
+  --ease-out: cubic-bezier(0.5, 1, 0.89, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
 }
 
 body {
@@ -24,7 +32,7 @@ body {
 
 body * {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   color: var(--text-color);
 }
 
@@ -37,7 +45,7 @@ body * {
 
 #user {
   text-align: center;
-  padding: 16px; /* Reduced padding */
+  padding: 16px;
 }
 
 #user img {
@@ -51,65 +59,117 @@ body * {
 
 #user p {
   font-weight: 500;
-  line-height: 1.2; /* Changed from fixed 90px */
-  font-size: clamp(32px, 5vw, 60px); /* Responsive font size */
+  line-height: 1.2;
+  font-size: clamp(32px, 5vw, 60px);
   margin-top: 20px;
 }
 
-ul {
-  list-style: none;
+main {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  padding: 16px 0;
-  margin: 0;
+  gap: var(--space);
+  margin: auto;
+  inline-size: min(var(--max, 40rem), 100%);
 }
 
-ul li {
+.card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-areas: "card";
+  place-items: center;
+  aspect-ratio: 1/1;
+  border: 1px solid var(--surface-2);
+  isolation: isolate;
+  transition: border-color 200ms var(--ease-out);
+  user-select: none;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at bottom left, transparent 55%, var(--surface-1));
+  pointer-events: none;
+  box-shadow: var(--bg) -0.5cqi 0.5cqi 2.5cqi inset;
+  transition: opacity 900ms var(--ease-out);
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
   aspect-ratio: 1;
+  background: radial-gradient(circle, var(--bg), transparent 65%);
+  opacity: 0;
+  transition: opacity 800ms var(--ease-out);
 }
 
-ul li a {
+.card>* {
+  grid-area: card;
+}
+
+.card a {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
   padding: 12px;
-  background: var(--surface-color);
-  border: 1px solid var(--stroke-color);
-  border-radius: 8px;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  color: var(--text-color);
   text-decoration: none;
   font-weight: 500;
-  transition: background 0.2s;
   width: 100%;
   height: 100%;
-}
-
-ul li a .icon {
-  font-size: 4em;
   position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+align-items: end;
 }
 
-ul li a .text {
-  margin-top: auto; /* PUSHES TEXT TO THE BOTTOM */
-  }
+.card .icon {
+position: relative;
+z-index: 1;
+font-size: 4em;
+color: var(--surface-3);
+transition: 300ms var(--ease-out);
+  transition-property: color, scale;
+}
+
+.card:where(:hover, :focus-within) .icon {
+  color: var(--active-color, var(--fg));
+  scale: 1.1;
+  transition: 300ms var(--ease-in-out);
+}
+
+.card:focus-within {
+  outline: 5px auto Highlight;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+.card:where(:hover, :focus-within) {
+  border-color: var(--active-color, var(--fg));
+  transition: border-color 800ms var(--ease-in-out);
+}
+
+.card:where(:hover, :focus-within)::before {
+  opacity: 0;
+}
+
+.card:where(:hover, :focus-within)::after {
+  opacity: 1;
+}
+
 
 /* Add media queries for better responsiveness */
 @media screen and (max-height: 800px) {
   #user img {
-    width: 170px;
-    height: 170px;
-    margin-top: 12px;
+      width: 160px;
+      height: 160px;
+      margin-top: 12px;
   }
-  
+
   #user {
-    padding: 12px;
-  }
-  
-  ul {
-    padding: 12px 0;
+      padding: 12px;
   }
 }
 
