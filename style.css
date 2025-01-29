@@ -227,3 +227,19 @@ main {
       transform: translate(0, 0)
   }
 }
+
+@font-face {
+  font-family: "Font_My_Icon_Font";
+  src: url("assets/MyIconFont.woff2") format('woff2'),
+       url("assets/MyIconFont.woff") format('woff'),
+}
+
+.MyIconFont-shikimory::before{
+  font-family: 'Font_My_Icon_Font';
+  display: inline-block;
+  font-size: 90px;
+  font-style: normal;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  content: "\0053";
+}
