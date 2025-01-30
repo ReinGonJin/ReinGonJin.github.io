@@ -23,6 +23,7 @@ let pointerX,
 let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.0005 };
 
 let touchInput = false;
+let isPointerEnabled = true
 
 generate();
 resize();
@@ -33,6 +34,10 @@ canvas.onmousemove = onMouseMove;
 canvas.ontouchmove = onTouchMove;
 canvas.ontouchend = onMouseLeave;
 document.onmouseleave = onMouseLeave;
+
+document.querySelector('#user img').addEventListener('click', () => {
+  isPointerEnabled = !isPointerEnabled;
+});
 
 function generate() {
 
@@ -201,11 +206,11 @@ function movePointer( x, y ) {
 }
 
 function onMouseMove( event ) {
-
+  if (isPointerEnabled) {
+    return;
+  }
   touchInput = false;
-
   movePointer( event.clientX, event.clientY );
-
 }
 
 function onTouchMove( event ) {
