@@ -230,13 +230,13 @@ main {
 
 @font-face {
   font-family: "Font_My_Icon_Font";
-  src: url("FontAwesome5Brands-Regular.woff2") format('woff2'),
+  src: url("assets/FontAwesome5Brands-Regular.woff2") format('woff2'),
 }
 
 .MyIconFont-shikimory::before{
   font-family: 'Font_My_Icon_Font';
   display: inline-block;
-  font-size: 90px;
+  font-size: 60px;
   font-style: normal;
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
