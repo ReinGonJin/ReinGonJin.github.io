@@ -65,7 +65,7 @@ canvas {
 }
 
 #user p {
-  text-wrap: balance;
+  font-size: 4em;
   margin-top: 5px;
 }
 
@@ -178,7 +178,6 @@ main {
 
 .channel-split-wrapper {
   position: relative;
-  font-size: 4em;
   display: inline-block;
 }
 
