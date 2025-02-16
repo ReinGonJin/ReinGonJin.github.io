@@ -65,6 +65,7 @@ canvas {
 }
 
 #user p {
+  text-wrap: balance;
   margin-top: 5px;
 }
 
