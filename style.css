@@ -68,7 +68,7 @@ canvas {
 }
 
 #user p {
-  font-size: clamp(14px, 4rem, 100px);
+  font-size: clamp(40px, 4vw, 60px);
   margin-top: 5px;
 }
 
