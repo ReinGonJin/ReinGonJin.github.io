@@ -1,231 +1,147 @@
-/*          *     .        *  .    *    *   . 
- .  *  move your mouse to over the stars   .
- *  .  .   change these values:   .  *
-   .      * .        .          * .       */
-const STAR_COLOR = '#fff';
-const STAR_SIZE = 3;
-const STAR_MIN_SCALE = 0.2;
-const OVERFLOW_THRESHOLD = 50;
-const STAR_COUNT = ( window.innerWidth + window.innerHeight ) / 8;
+/* =====================================================
+   Black Hole Background — Spiral Particle Animation
+   ===================================================== */
+(function () {
+  const canvas = document.querySelector('canvas');
+  const ctx = canvas.getContext('2d');
 
-const canvas = document.querySelector( 'canvas' ),
-      context = canvas.getContext( '2d' );
+  let width, height, centerX, centerY;
+  let particles = [];
+  let animationId;
 
-let scale = 1, // device pixel ratio
-    width,
-    height;
+  const PARTICLE_COUNT = 600;
+  const CORE_RADIUS = 4;           // visual core size
+  const GLOW_RADIUS = 60;          // glow around the core
+  const SPAWN_MIN_RADIUS = 120;    // min spawn distance from center
+  const SPAWN_MAX_FACTOR = 0.45;   // fraction of the smaller viewport dimension
+  const SPIRAL_SPEED = 0.003;      // angular velocity base
+  const INWARD_SPEED = 0.15;       // radial pull base
+  const FADE_RADIUS = 30;          // particles start fading when closer than this
 
-let stars = [];
+  /* ---------- Particle ---------- */
+  class Particle {
+    constructor() {
+      this.reset();
+    }
 
-let pointerX,
-    pointerY;
+    reset() {
+      const maxR = Math.min(width, height) * SPAWN_MAX_FACTOR;
+      this.radius = SPAWN_MIN_RADIUS + Math.random() * (maxR - SPAWN_MIN_RADIUS);
+      this.angle = Math.random() * Math.PI * 2;
+      this.speed = SPIRAL_SPEED + Math.random() * SPIRAL_SPEED * 2;
+      this.inward = INWARD_SPEED + Math.random() * INWARD_SPEED;
+      this.size = 0.5 + Math.random() * 1.8;
+      this.brightness = 0.4 + Math.random() * 0.6;
 
-let velocity = { x: 0, y: 0, tx: 0, ty: 0, z: 0.0005 };
+      // subtle warm/cool color mix
+      const hue = Math.random() < 0.3
+        ? 220 + Math.random() * 40        // blue‑ish
+        : 15 + Math.random() * 30;        // warm amber
+      const sat = 30 + Math.random() * 50;
+      const light = 65 + Math.random() * 30;
+      this.color = `hsla(${hue}, ${sat}%, ${light}%, `;
+    }
 
-let touchInput = false;
-let isPointerEnabled = true
+    update() {
+      this.angle += this.speed;
+      this.radius -= this.inward;
 
-generate();
-resize();
-step();
+      // respawn when sucked in
+      if (this.radius < CORE_RADIUS) {
+        this.reset();
+      }
+    }
 
-window.onresize = resize;
-canvas.onmousemove = onMouseMove;
-canvas.ontouchmove = onTouchMove;
-canvas.ontouchend = onMouseLeave;
-document.onmouseleave = onMouseLeave;
+    draw() {
+      const x = centerX + Math.cos(this.angle) * this.radius;
+      const y = centerY + Math.sin(this.angle) * this.radius;
 
-document.querySelector('#user img').addEventListener('click', () => {
-  isPointerEnabled = !isPointerEnabled;
-});
+      // fade near core
+      let alpha = this.brightness;
+      if (this.radius < FADE_RADIUS) {
+        alpha *= this.radius / FADE_RADIUS;
+      }
 
-function generate() {
+      ctx.fillStyle = this.color + alpha.toFixed(3) + ')';
+      ctx.beginPath();
+      ctx.arc(x, y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
 
-   for( let i = 0; i < STAR_COUNT; i++ ) {
-    stars.push({
-      x: 0,
-      y: 0,
-      z: STAR_MIN_SCALE + Math.random() * ( 1 - STAR_MIN_SCALE )
+  /* ---------- Core glow ---------- */
+  function drawCore() {
+    // outer soft glow
+    const g1 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, GLOW_RADIUS);
+    g1.addColorStop(0, 'rgba(120, 80, 200, 0.15)');
+    g1.addColorStop(0.4, 'rgba(80, 50, 160, 0.06)');
+    g1.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = g1;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, GLOW_RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+
+    // bright inner dot
+    const g2 = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, CORE_RADIUS * 3);
+    g2.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+    g2.addColorStop(0.3, 'rgba(180, 140, 255, 0.4)');
+    g2.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = g2;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, CORE_RADIUS * 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  /* ---------- Loop ---------- */
+  function animate() {
+    // semi‑transparent clear for motion trail
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+    ctx.fillRect(0, 0, width, height);
+
+    drawCore();
+
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].update();
+      particles[i].draw();
+    }
+
+    animationId = requestAnimationFrame(animate);
+  }
+
+  /* ---------- Init / Resize ---------- */
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth * dpr;
+    height = window.innerHeight * dpr;
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.scale(dpr, dpr);
+
+    // Use CSS pixels for center so scaling is handled by ctx.scale
+    centerX = window.innerWidth / 2;
+    centerY = window.innerHeight / 2;
+  }
+
+  function init() {
+    resize();
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push(new Particle());
+    }
+    // stagger starting positions so the spiral looks pre‑filled
+    particles.forEach(p => {
+      const steps = Math.floor(Math.random() * 400);
+      for (let s = 0; s < steps; s++) p.update();
     });
-   }
-
-}
-
-function placeStar( star ) {
-
-  star.x = Math.random() * width;
-  star.y = Math.random() * height;
-
-}
-
-function recycleStar( star ) {
-
-  let direction = 'z';
-
-  let vx = Math.abs( velocity.x ),
-	    vy = Math.abs( velocity.y );
-
-  if( vx > 1 || vy > 1 ) {
-    let axis;
-
-    if( vx > vy ) {
-      axis = Math.random() < vx / ( vx + vy ) ? 'h' : 'v';
-    }
-    else {
-      axis = Math.random() < vy / ( vx + vy ) ? 'v' : 'h';
-    }
-
-    if( axis === 'h' ) {
-      direction = velocity.x > 0 ? 'l' : 'r';
-    }
-    else {
-      direction = velocity.y > 0 ? 't' : 'b';
-    }
-  }
-  
-  star.z = STAR_MIN_SCALE + Math.random() * ( 1 - STAR_MIN_SCALE );
-
-  if( direction === 'z' ) {
-    star.z = 0.1;
-    star.x = Math.random() * width;
-    star.y = Math.random() * height;
-  }
-  else if( direction === 'l' ) {
-    star.x = -OVERFLOW_THRESHOLD;
-    star.y = height * Math.random();
-  }
-  else if( direction === 'r' ) {
-    star.x = width + OVERFLOW_THRESHOLD;
-    star.y = height * Math.random();
-  }
-  else if( direction === 't' ) {
-    star.x = width * Math.random();
-    star.y = -OVERFLOW_THRESHOLD;
-  }
-  else if( direction === 'b' ) {
-    star.x = width * Math.random();
-    star.y = height + OVERFLOW_THRESHOLD;
+    cancelAnimationFrame(animationId);
+    animate();
   }
 
-}
+  window.addEventListener('resize', () => {
+    init();
+  });
 
-function resize() {
-
-  scale = window.devicePixelRatio || 1;
-
-  width = window.innerWidth * scale;
-  height = window.innerHeight * scale;
-
-  canvas.width = width;
-  canvas.height = height;
-
-  stars.forEach( placeStar );
-
-}
-
-function step() {
-
-  context.clearRect( 0, 0, width, height );
-
-  update();
-  render();
-
-  requestAnimationFrame( step );
-
-}
-
-function update() {
-
-  velocity.tx *= 0.96;
-  velocity.ty *= 0.96;
-
-  velocity.x += ( velocity.tx - velocity.x ) * 0.8;
-  velocity.y += ( velocity.ty - velocity.y ) * 0.8;
-
-  stars.forEach( ( star ) => {
-
-    star.x += velocity.x * star.z;
-    star.y += velocity.y * star.z;
-
-    star.x += ( star.x - width/2 ) * velocity.z * star.z;
-    star.y += ( star.y - height/2 ) * velocity.z * star.z;
-    star.z += velocity.z;
-  
-    // recycle when out of bounds
-    if( star.x < -OVERFLOW_THRESHOLD || star.x > width + OVERFLOW_THRESHOLD || star.y < -OVERFLOW_THRESHOLD || star.y > height + OVERFLOW_THRESHOLD ) {
-      recycleStar( star );
-    }
-
-  } );
-
-}
-
-function render() {
-
-  stars.forEach( ( star ) => {
-
-    context.beginPath();
-    context.lineCap = 'round';
-    context.lineWidth = STAR_SIZE * star.z * scale;
-    context.globalAlpha = 0.5 + 0.5*Math.random();
-    context.strokeStyle = STAR_COLOR;
-
-    context.beginPath();
-    context.moveTo( star.x, star.y );
-
-    var tailX = velocity.x * 2,
-        tailY = velocity.y * 2;
-
-    // stroke() wont work on an invisible line
-    if( Math.abs( tailX ) < 0.1 ) tailX = 0.5;
-    if( Math.abs( tailY ) < 0.1 ) tailY = 0.5;
-
-    context.lineTo( star.x + tailX, star.y + tailY );
-
-    context.stroke();
-
-  } );
-
-}
-
-function movePointer( x, y ) {
-
-  if( typeof pointerX === 'number' && typeof pointerY === 'number' ) {
-
-    let ox = x - pointerX,
-        oy = y - pointerY;
-
-    velocity.tx = velocity.tx + ( ox / 8*scale ) * ( touchInput ? 1 : -1 );
-    velocity.ty = velocity.ty + ( oy / 8*scale ) * ( touchInput ? 1 : -1 );
-
-  }
-
-  pointerX = x;
-  pointerY = y;
-
-}
-
-function onMouseMove( event ) {
-  if (isPointerEnabled) {
-    return;
-  }
-  touchInput = false;
-  movePointer( event.clientX, event.clientY );
-}
-
-function onTouchMove( event ) {
-
-  touchInput = true;
-
-  movePointer( event.touches[0].clientX, event.touches[0].clientY, true );
-
-  event.preventDefault();
-
-}
-
-function onMouseLeave() {
-
-  pointerX = null;
-  pointerY = null;
-
-}
+  init();
+})();

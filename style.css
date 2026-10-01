@@ -12,10 +12,10 @@
   --surface-color: rgba(255, 255, 255, 0.05);
   --surface-color-hover: rgba(0, 0, 0, 0.02);
   --space: 1rem;
-  --bg: #09090b;
+  --bg: #030305;
   --fg: #e3e3e3;
-  --surface-1: #101012;
-  --surface-2: #27272a;
+  --surface-1: #0a0a0e;
+  --surface-2: #1a1a22;
   --surface-3: #52525b;
   --ease-out: cubic-bezier(0.5, 1, 0.89, 1);
   --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
@@ -26,9 +26,8 @@ body {
   height: 100vh;
   display: flex;
   align-items: center;
-  background-color: #000;
-  background-image: radial-gradient(circle at top right, rgba(121, 68, 154, 0.13),       transparent),
-    radial-gradient(circle at 20% 80%, rgba(41, 196, 255, 0.13), transparent)
+  background-color: #020204;
+  overflow: hidden;
 }
 
 body * {
@@ -45,6 +44,7 @@ body * {
   font-size: 40px;
   color: var(--text-color);
   opacity: 0.8;
+  z-index: 10;
   
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
@@ -54,13 +54,20 @@ body * {
   transform: scale(1.1);
 }
 
+/* Background canvas — behind everything */
 canvas {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  z-index: 0;
+  pointer-events: none;
 }
 
 #container {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 588px;
   margin: 0 auto;
@@ -68,7 +75,7 @@ canvas {
 }
 
 #user {
-  isplay: flex;
+  display: flex;
   flex-direction: column; 
   align-items: center;
   text-align: center;
@@ -252,19 +259,4 @@ main {
   100% {
       transform: translate(0, 0)
   }
-}
-
-@font-face {
-  font-family: "Font_My_Icon_Font";
-  src: url("assets/FontAwesome5Brands-Regular.woff2") format('woff2'),
-}
-
-.MyIconFont-shikimory::before{
-  font-family: 'Font_My_Icon_Font';
-  display: inline-block;
-  font-size: 60px;
-  font-style: normal;
-  text-rendering: auto;
-  -webkit-font-smoothing: antialiased;
-  content: "\f186";
 }
